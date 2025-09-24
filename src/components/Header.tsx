@@ -32,10 +32,10 @@ const Header = () => {
           {/* CTA Buttons */}
           <div className="flex items-center space-x-4">
             <Button variant="ghost" className="hidden sm:inline-flex">
-              Entrar
+              <a href="/dashboard">Entrar</a>
             </Button>
             <Button variant="gradient">
-              Começar Grátis
+              <a href="/dashboard">Dashboard</a>
             </Button>
             
             {/* Mobile menu button */}
