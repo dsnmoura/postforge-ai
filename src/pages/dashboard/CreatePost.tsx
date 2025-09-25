@@ -12,12 +12,19 @@ import {
   Star, 
   Users,
   Target,
-  Megaphone
+  Megaphone,
+  Image,
+  Video,
+  FileText,
+  LayoutGrid,
+  Play,
+  Camera
 } from "lucide-react";
 
 const CreatePost = () => {
   const [selectedObjective, setSelectedObjective] = useState<string>("");
   const [selectedNetwork, setSelectedNetwork] = useState<string>("");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
 
   const objectives = [
     { id: "promocao", name: "Promoção", icon: Gift, color: "bg-red-500" },
@@ -34,6 +41,107 @@ const CreatePost = () => {
     { id: "linkedin", name: "LinkedIn", icon: Linkedin, formats: ["Post", "Artigo", "Carrossel"] },
     { id: "tiktok", name: "TikTok", icon: MessageCircle, formats: ["Vídeo", "Stories"] },
   ];
+
+  const templates = {
+    instagram: [
+      { 
+        id: "ig-feed-quadrado", 
+        name: "Post Quadrado", 
+        icon: Image, 
+        description: "Formato 1:1 ideal para feed", 
+        size: "1080x1080",
+        category: "Feed"
+      },
+      { 
+        id: "ig-stories", 
+        name: "Stories", 
+        icon: Camera, 
+        description: "Formato vertical para stories", 
+        size: "1080x1920",
+        category: "Stories"
+      },
+      { 
+        id: "ig-carrossel", 
+        name: "Carrossel", 
+        icon: LayoutGrid, 
+        description: "Múltiplas imagens deslizáveis", 
+        size: "1080x1080",
+        category: "Feed"
+      },
+      { 
+        id: "ig-reels", 
+        name: "Reels", 
+        icon: Play, 
+        description: "Vídeo vertical curto", 
+        size: "1080x1920",
+        category: "Reels"
+      }
+    ],
+    linkedin: [
+      { 
+        id: "li-post", 
+        name: "Post Simples", 
+        icon: FileText, 
+        description: "Post com texto e imagem", 
+        size: "1200x627",
+        category: "Post"
+      },
+      { 
+        id: "li-carrossel", 
+        name: "Carrossel LinkedIn", 
+        icon: LayoutGrid, 
+        description: "Apresentação em slides", 
+        size: "1080x1080",
+        category: "Post"
+      },
+      { 
+        id: "li-artigo", 
+        name: "Artigo", 
+        icon: FileText, 
+        description: "Formato de artigo longo", 
+        size: "1200x627",
+        category: "Artigo"
+      },
+      { 
+        id: "li-infografico", 
+        name: "Infográfico", 
+        icon: LayoutGrid, 
+        description: "Visual informativo", 
+        size: "1080x1350",
+        category: "Post"
+      }
+    ],
+    tiktok: [
+      { 
+        id: "tt-video", 
+        name: "Vídeo Vertical", 
+        icon: Video, 
+        description: "Vídeo para TikTok", 
+        size: "1080x1920",
+        category: "Vídeo"
+      },
+      { 
+        id: "tt-stories", 
+        name: "TikTok Stories", 
+        icon: Camera, 
+        description: "Stories do TikTok", 
+        size: "1080x1920",
+        category: "Stories"
+      },
+      { 
+        id: "tt-trend", 
+        name: "Trend Template", 
+        icon: TrendingUp, 
+        description: "Template baseado em trends", 
+        size: "1080x1920",
+        category: "Vídeo"
+      }
+    ]
+  };
+
+  const getTemplatesForNetwork = (networkId: string) => {
+    return templates[networkId as keyof typeof templates] || [];
+  };
 
   return (
     <div className="space-y-8">
@@ -125,11 +233,74 @@ const CreatePost = () => {
         </CardContent>
       </Card>
 
-      {/* Botão de Próximo Passo */}
+      {/* Seleção de Template */}
       {selectedObjective && selectedNetwork && (
-        <div className="flex justify-center">
+        <Card className="animate-fade-in">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <LayoutGrid className="h-5 w-5" />
+              Escolha seu template
+            </CardTitle>
+            <CardDescription>
+              Templates otimizados para {networks.find(n => n.id === selectedNetwork)?.name}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {getTemplatesForNetwork(selectedNetwork).map((template) => (
+                <div
+                  key={template.id}
+                  onClick={() => setSelectedTemplate(template.id)}
+                  className={`
+                    group p-6 rounded-lg border cursor-pointer transition-smooth hover:scale-102
+                    ${selectedTemplate === template.id 
+                      ? 'border-primary bg-primary/10 shadow-card' 
+                      : 'border-border hover:border-primary/50'
+                    }
+                  `}
+                >
+                  <div className="space-y-4">
+                    {/* Preview do Template */}
+                    <div className="relative">
+                      <div className="aspect-square bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center">
+                        <template.icon className="h-12 w-12 text-primary/60" />
+                      </div>
+                      <Badge 
+                        variant="secondary" 
+                        className="absolute top-2 right-2 text-xs"
+                      >
+                        {template.category}
+                      </Badge>
+                    </div>
+                    
+                    {/* Informações do Template */}
+                    <div className="space-y-2">
+                      <h3 className="font-semibold text-lg">{template.name}</h3>
+                      <p className="text-sm text-muted-foreground">{template.description}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground font-mono">
+                          {template.size}px
+                        </span>
+                        {selectedTemplate === template.id && (
+                          <Badge variant="default" className="text-xs">
+                            Selecionado
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Botão de Próximo Passo */}
+      {selectedObjective && selectedNetwork && selectedTemplate && (
+        <div className="flex justify-center animate-fade-in">
           <Button size="lg" className="px-8">
-            Continuar com {objectives.find(o => o.id === selectedObjective)?.name} para {networks.find(n => n.id === selectedNetwork)?.name}
+            Criar Post com {getTemplatesForNetwork(selectedNetwork).find(t => t.id === selectedTemplate)?.name}
           </Button>
         </div>
       )}
