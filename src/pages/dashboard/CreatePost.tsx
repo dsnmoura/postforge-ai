@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { 
   Instagram, 
@@ -18,13 +19,17 @@ import {
   FileText,
   LayoutGrid,
   Play,
-  Camera
+  Camera,
+  PenTool,
+  Lightbulb,
+  Sparkles
 } from "lucide-react";
 
 const CreatePost = () => {
   const [selectedObjective, setSelectedObjective] = useState<string>("");
   const [selectedNetwork, setSelectedNetwork] = useState<string>("");
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
+  const [postTheme, setPostTheme] = useState<string>("");
 
   const objectives = [
     { id: "promocao", name: "Promoção", icon: Gift, color: "bg-red-500" },
@@ -142,6 +147,14 @@ const CreatePost = () => {
   const getTemplatesForNetwork = (networkId: string) => {
     return templates[networkId as keyof typeof templates] || [];
   };
+
+  const themeExamples = [
+    "Promoção de Black Friday - desconto especial para clientes",
+    "Dica para melhorar produtividade no trabalho remoto",
+    "Lançamento de novo produto inovador da empresa",
+    "Depoimento de cliente satisfeito com nosso serviço",
+    "Tutorial passo a passo sobre nossa especialidade"
+  ];
 
   return (
     <div className="space-y-8">
@@ -296,11 +309,67 @@ const CreatePost = () => {
         </Card>
       )}
 
-      {/* Botão de Próximo Passo */}
+      {/* Entrada do Tema */}
       {selectedObjective && selectedNetwork && selectedTemplate && (
+        <Card className="animate-fade-in">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <PenTool className="h-5 w-5" />
+              Descreva o tema do seu post
+            </CardTitle>
+            <CardDescription>
+              Conte-nos sobre o que você quer comunicar. Seja específico para obter melhores resultados.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <Textarea
+                placeholder="Ex: Promoção de Black Friday com 30% de desconto em todos os produtos da loja..."
+                value={postTheme}
+                onChange={(e) => setPostTheme(e.target.value)}
+                className="min-h-[120px] resize-none"
+              />
+              <p className="text-sm text-muted-foreground">
+                Mínimo de 20 caracteres para gerar conteúdo de qualidade
+              </p>
+            </div>
+
+            {/* Exemplos de temas */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="h-4 w-4 text-yellow-500" />
+                <span className="text-sm font-medium">Exemplos de temas:</span>
+              </div>
+              <div className="grid gap-2">
+                {themeExamples.map((example, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setPostTheme(example)}
+                    className="text-left p-3 rounded-lg bg-muted/50 hover:bg-muted transition-smooth text-sm border border-transparent hover:border-border"
+                  >
+                    {example}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Indicador de progresso */}
+            <div className="flex items-center gap-2 p-3 bg-primary/5 rounded-lg">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span className="text-sm text-primary font-medium">
+                IA irá gerar conteúdo personalizado baseado no seu tema
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Botão de Próximo Passo */}
+      {selectedObjective && selectedNetwork && selectedTemplate && postTheme.length >= 20 && (
         <div className="flex justify-center animate-fade-in">
           <Button size="lg" className="px-8">
-            Criar Post com {getTemplatesForNetwork(selectedNetwork).find(t => t.id === selectedTemplate)?.name}
+            <Sparkles className="h-4 w-4 mr-2" />
+            Gerar Conteúdo com IA
           </Button>
         </div>
       )}
